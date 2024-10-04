@@ -14,6 +14,7 @@
         add_filter('archive_template', [$this, 'archive_template']);
         add_filter('single_template', [$this, 'single_template']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
+        add_action('acf/init', [$this, 'register_acf_fields']);
     }
 
     public function register_post_type() {
@@ -70,6 +71,38 @@
 
     public function enqueue_styles() {
         wp_enqueue_style('receitas-styles', plugin_dir_url(__FILE__) . 'assets/css/receitas.css');
+    }
+
+    public function register_acf_fields() {
+        if( function_exists('acf_add_local_field_group') ) {
+            acf_add_local_field_group(array(
+                'key' => 'group_1',
+                'title' => 'Detalhes da Receita',
+                'fields' => array(
+                    array(
+                        'key' => 'field_1',
+                        'label' => 'Tempo de Preparo',
+                        'name' => 'tempo_preparo',
+                        'type' => 'text',
+                    ),
+                    array(
+                        'key' => 'field_2',
+                        'label' => 'Ingredientes',
+                        'name' => 'ingredientes',
+                        'type' => 'textarea',
+                    ),
+                ),
+                'location' => array(
+                    array(
+                        array(
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => 'receita',
+                        ),
+                    ),
+                ),
+            ));
+        }
     }
 
     public function rb_get_related_recipes($current_post_id) {
