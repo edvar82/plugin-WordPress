@@ -15,6 +15,14 @@
         add_filter('single_template', [$this, 'single_template']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_styles']);
         add_action('acf/init', [$this, 'register_acf_fields']);
+        register_activation_hook(__FILE__, [$this, 'flush_rewrite_rules']);
+        register_deactivation_hook(__FILE__, [$this, 'flush_rewrite_rules']);
+    }
+
+    public function flush_rewrite_rules() {
+        $this->register_post_type();
+        $this->register_taxonomy();
+        flush_rewrite_rules();
     }
 
     public function register_post_type() {
